@@ -2,7 +2,6 @@ package com.gmail.s12348.evgen;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JOptionPane;
 
@@ -55,60 +54,53 @@ public class Human {
 		this.sex = sex;
 	}
 
-	public void inputName() {
-		String name = "";
+	public void inputName() throws MyExeption {
+		name = "";
 		for (;;) {
-			name = String.valueOf(JOptionPane.showInputDialog("Введите имя"));
-			System.out.println(checkString(name));
-			if (name == "null") {
-				JOptionPane.showMessageDialog(null, "Canseled set as default");
-				name = "NoName";
-				break;
-			}
+			name = String.valueOf(JOptionPane.showInputDialog("Input name"));
+			if (name == "null")
+				throw new MyExeption();
 			if (checkString(name) != true) {
 				JOptionPane.showMessageDialog(null, "Input Error");
 			} else {
-				JOptionPane.showMessageDialog(null, "Вы ввели имя " + name);
 				break;
 			}
 		}
 	}
 
-	public void inputSurname() {
-		String surname = "";
+	public void inputSurname() throws MyExeption {
+		surname = "";
 		for (;;) {
-			surname = String.valueOf(JOptionPane.showInputDialog("Введите фамилию"));
-			System.out.println(checkString(surname));
-			if (surname == "null") {
-				JOptionPane.showMessageDialog(null, "Canseled set as default");
-				surname = "NoSurname";
-				break;
-			}
+			surname = String.valueOf(JOptionPane.showInputDialog("Input surname"));
+			if (surname == "null")
+				throw new MyExeption();
 			if (checkString(surname) != true) {
 				JOptionPane.showMessageDialog(null, "Input Error");
 			} else {
-				JOptionPane.showMessageDialog(null, "Вы ввели фамилию " + surname);
 				break;
 			}
 		}
 	}
 
-	public void inputSex() {
-		int s = JOptionPane.showConfirmDialog(null, surname + " " + name + " мужчина?");
+	public String inputSex() {
+		int s = JOptionPane.showConfirmDialog(null, surname + " " + name + " man?");
 		if (s == 0) {
 			sex = "man";
 		} else if (s == 1) {
 			sex = "woman";
 		}
-
+		return sex;
 	}
 
 	public void inputOld() {
-		int a=0;
 		for (;;) {
 			try {
-				a = Integer.valueOf(JOptionPane.showInputDialog("Введите возраст"));
+				old = Integer.valueOf(JOptionPane.showInputDialog("Enter the age"));
+				if (old <= 0)
+					throw new MyNegativeExeption();
 				break;
+			} catch (MyNegativeExeption e) {
+				e.negativeNumber();
 			} catch (NumberFormatException e) {
 				JOptionPane.showMessageDialog(null, "Error number format");
 			} catch (NullPointerException e) {
@@ -116,24 +108,27 @@ public class Human {
 				break;
 			}
 		}
-		JOptionPane.showMessageDialog(null, "Вы ввели число " + a);
-
 	}
 
-	public boolean checkString(String string) throws PatternSyntaxException {
+	public boolean checkString(String string) {
 		if (string.length() == 0) {
 			return false;
 		} else {
-			Pattern p = Pattern.compile("^([a-zA-Zа-яА-Я- ]+)");
+			Pattern p = Pattern.compile("^([a-zA-Z- №]+)");
 			Matcher m = p.matcher(string);
 
 			return m.matches();
 		}
 	}
 
+	public void print() {
+		System.out.printf("Human " + name + " " + surname + ", " + sex + ", age " + old);
+	}
+
 	@Override
 	public String toString() {
-		return "Human [name=" + name + ", surname=" + surname + ", sex=" + sex + ", old=" + old + "]";
+
+		return surname + " " + name + ", " + sex + ", age " + old;
 	}
 
 }
